@@ -14,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 /* DB Config */
+mongoose.set('useFindAndModify', false);
 const db = require('./config/keys').mongoURI;
 mongoose
   .connect(
