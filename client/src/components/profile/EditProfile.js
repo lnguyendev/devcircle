@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-import { createProfile } from '../../actions/profileActions';
+import { createProfile, getCurrentProfile } from '../../actions/profileActions';
+import objectMapper from '../../utils/objectMapper';
 
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
 import InputGroup from '../common/InputGroup';
 import SelectListGroup from '../common/SelectListGroup';
 
-class CreateProfile extends Component {
+class EditProfile extends Component {
   constructor(props) {
     super(props);
 
@@ -35,11 +37,29 @@ class CreateProfile extends Component {
     this.onChange = this.onChange.bind(this);
   }
 
+  fillProfileState = profile => {
+    const { skills, social } = profile;
+    const skillsToFill = skills ? skills.join(',') : '';
+    const socialsToFill = social ? objectMapper(social, this.state) : {};
+    const profileToFill = {
+      ...objectMapper(profile, this.state),
+      ...socialsToFill,
+      skills: skillsToFill
+    };
+    this.setState({
+      ...this.state,
+      ...profileToFill
+    });
+  };
+
+  componentDidMount() {
+    this.props.getCurrentProfile();
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
-      this.setState({
-        errors: nextProps.errors
-      });
+    const { profile } = nextProps.profile;
+    if (profile) {
+      this.fillProfileState(profile);
     }
   }
 
@@ -72,7 +92,8 @@ class CreateProfile extends Component {
   }
 
   render() {
-    const { errors, displaySocialInput } = this.state;
+    const { displaySocialInput } = this.state;
+    const { errors } = this.props;
 
     const options = [
       { label: '* Select Professional Status', value: 0 },
@@ -140,10 +161,10 @@ class CreateProfile extends Component {
         <div className="container">
           <div className="row">
             <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Create Your Profile.</h1>
-              <p className="lead text-center">
-                Let's get some information to make your profile stand out.
-              </p>
+              <Link to="/dashboard" className="btn btn-light">
+                Back
+              </Link>
+              <h1 className="display-4 text-center">Edit Your Profile.</h1>
               <small className="d-block pb-3">* = required fields</small>
               <form onSubmit={this.onSubmit}>
                 <TextFieldGroup
@@ -240,8 +261,9 @@ class CreateProfile extends Component {
   }
 }
 
-CreateProfile.propTypes = {
+EditProfile.propTypes = {
   createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -253,5 +275,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { createProfile }
-)(CreateProfile);
+  { createProfile, getCurrentProfile }
+)(EditProfile);
