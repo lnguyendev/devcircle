@@ -83,7 +83,7 @@ class Login extends Component {
                   error={errors.password}
                 />
                 {errors.credentials && (
-                  <div class="alert alert-danger" role="alert">
+                  <div className="alert alert-danger" role="alert">
                     {errors.credentials}
                   </div>
                 )}
