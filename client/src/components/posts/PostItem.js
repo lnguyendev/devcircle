@@ -60,6 +60,12 @@ class PostItem extends Component {
                   />
                   <span className="badge badge-light">{post.likes.length}</span>
                 </button>
+                <button type="button" className="btn btn-light mr-1" disabled>
+                  <i className="fas fa-comment text-success" />
+                  <span className="badge badge-light">
+                    {post.comments.length}
+                  </span>
+                </button>
                 <Link to={`/post/${post._id}`} className="btn btn-info mr-1">
                   Comments
                 </Link>

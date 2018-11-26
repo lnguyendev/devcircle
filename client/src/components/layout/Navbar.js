@@ -2,10 +2,19 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
+import isEmpty from '../../validation/is-empty';
 import { logoutUser } from '../../actions/authActions';
-import { clearCurrentProfile } from '../../actions/profileActions';
+import {
+  clearCurrentProfile,
+  getCurrentProfile
+} from '../../actions/profileActions';
 
 class NavBar extends Component {
+  componentWillMount() {
+    this.props.getCurrentProfile();
+  }
+
   onLogoutClick(e) {
     e.preventDefault();
 
@@ -15,13 +24,20 @@ class NavBar extends Component {
 
   render() {
     const { isAuthenticated, user } = this.props.auth;
+    const {
+      profile: { profile }
+    } = this.props;
 
     const authLinks = (
       <ul className="navbar-nav ml-auto">
         <li className="nav-item">
-          <Link className="nav-link" to="/feed">
-            Post Feed
-          </Link>
+          {!isEmpty(profile) && (
+            <span>
+              <Link className="nav-link" to="/feed">
+                Post Feed
+              </Link>
+            </span>
+          )}
         </li>
         <li className="nav-item">
           <Link className="nav-link" to="/dashboard">
@@ -96,14 +112,17 @@ class NavBar extends Component {
 NavBar.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   clearCurrentProfile: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired
+  getCurrentProfile: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  profile: state.profile
 });
 
 export default connect(
   mapStateToProps,
-  { logoutUser, clearCurrentProfile }
+  { logoutUser, clearCurrentProfile, getCurrentProfile }
 )(withRouter(NavBar));

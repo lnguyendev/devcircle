@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { createProfile, getCurrentProfile } from '../../actions/profileActions';
 import objectMapper from '../../utils/objectMapper';
+import isEmpty from '../../validation/is-empty';
 
 import TextFieldGroup from '../common/TextFieldGroup';
 import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
@@ -93,7 +94,10 @@ class EditProfile extends Component {
 
   render() {
     const { displaySocialInput } = this.state;
-    const { errors } = this.props;
+    const {
+      errors,
+      profile: { profile }
+    } = this.props;
 
     const options = [
       { label: '* Select Professional Status', value: 0 },
@@ -164,7 +168,9 @@ class EditProfile extends Component {
               <Link to="/dashboard" className="btn btn-light">
                 Back
               </Link>
-              <h1 className="display-4 text-center">Edit Your Profile.</h1>
+              <h1 className="display-4 text-center">
+                {isEmpty(profile) ? 'Create' : 'Edit'} Your Profile.
+              </h1>
               <small className="d-block pb-3">* = required fields</small>
               <form onSubmit={this.onSubmit}>
                 <TextFieldGroup

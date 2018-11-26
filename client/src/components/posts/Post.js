@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
 import { getPost } from '../../actions/postActions';
-import { getProfiles } from '../../actions/profileActions';
+import { getProfiles, getCurrentProfile } from '../../actions/profileActions';
 
 import isEmpty from '../../validation/is-empty';
 import Spinner from '../common/Spinner';
@@ -14,6 +14,15 @@ import CommentForm from './CommentForm';
 import CommentFeed from './CommentFeed';
 
 class Post extends Component {
+  componentWillMount() {
+    this.props.getCurrentProfile();
+
+    const { profile } = this.props.profile;
+
+    if (_.isEmpty(profile)) {
+      this.props.history.push('/dashboard');
+    }
+  }
   componentDidMount() {
     this.props.getPost(this.props.match.params.id);
     this.props.getProfiles();
@@ -67,6 +76,8 @@ class Post extends Component {
 
 Post.proptypes = {
   getPost: PropTypes.func.isRequired,
+  getProfiles: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };
@@ -78,5 +89,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPost, getProfiles }
+  { getPost, getProfiles, getCurrentProfile }
 )(Post);

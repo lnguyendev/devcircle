@@ -3,13 +3,23 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { getPosts } from '../../actions/postActions';
-import { getProfiles } from '../../actions/profileActions';
+import { getProfiles, getCurrentProfile } from '../../actions/profileActions';
+import isEmpty from '../../validation/is-empty';
 
 import PostForm from './PostForm';
 import PostFeed from './PostFeed';
 import Spinner from '../common/Spinner';
 
 class Posts extends Component {
+  componentWillMount() {
+    this.props.getCurrentProfile();
+
+    const { profile } = this.props.profile;
+
+    if (isEmpty(profile)) {
+      this.props.history.push('/dashboard');
+    }
+  }
   componentDidMount() {
     this.props.getPosts();
     this.props.getProfiles();
@@ -44,6 +54,7 @@ class Posts extends Component {
 Posts.propTypes = {
   getPosts: PropTypes.func.isRequired,
   getProfiles: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };
@@ -55,5 +66,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPosts, getProfiles }
+  { getPosts, getProfiles, getCurrentProfile }
 )(Posts);
